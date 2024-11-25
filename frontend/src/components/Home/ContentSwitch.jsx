@@ -11,7 +11,7 @@ export default function ContentSwitch() {
     // Fetch posts from the API when the component is mounted
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:5173/api/posts");
+        const response = await axios.get("http://localhost:8000/api/posts");
         setPosts(response.data); // Set fetched posts into the state
       } catch (error) {
         console.error("Error fetching posts:", error);

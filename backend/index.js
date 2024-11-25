@@ -6,6 +6,7 @@ const express = require("express")
 const cors = require("cors")
 const connectToDB = require("./config/connectToDB")
 const postRoutes = require("./routes/postRoutes")
+const authRoutes = require("./routes/authRoutes")
 const path = require("path");
 
 
@@ -24,5 +25,6 @@ app.use(cors(corsOptions));
 connectToDB()
 
 app.use("/api", postRoutes);
+app.use("/api/auth", authRoutes);
 
 app.listen(process.env.PORT)

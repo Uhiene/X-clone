@@ -39,7 +39,7 @@ const DisplayPost = ({ user, content, image, timestamp }) => {
       </div>
 
       {/* Image (if any) */}
-      {image && <img src={`http://localhost:5173/uploads/${image}`} alt="Post image" className="w-full rounded-lg" />}
+      {image && <img src={`http://localhost:8000/uploads/${image}`} alt="Post image" className="w-full rounded-lg" />}
 
       {/* Post Actions (like, comment, share buttons) */}
       <div className="flex justify-between items-center mt-4 text-gray-500">

@@ -42,7 +42,7 @@ export default function CreatePost() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5173/api/posts",
+        "http://localhost:8000/api/posts",
         formData,
         {
           headers: {

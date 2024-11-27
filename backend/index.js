@@ -8,9 +8,12 @@ const connectToDB = require("./config/connectToDB")
 const postRoutes = require("./routes/postRoutes")
 const authRoutes = require("./routes/authRoutes")
 const path = require("path");
+const cookieParser = require("cookie-parser");
 
 
 const app = express()
+
+app.use(cookieParser())
 
 // Middleware for serving static files (uploads folder)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

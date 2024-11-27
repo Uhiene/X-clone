@@ -1,34 +1,91 @@
 import Sidebar from "./components/Sidebar";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Explore from "./pages/Explore";
 import Grok from "./pages/Grok";
 import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
-// import SearchBar from "./components/SearchBar";
+import { useAuthStore } from "./store/authStore";
+import { useEffect } from "react";
+import LoadingSpinner from "./components/LoadingSpinner";
+import Login from "./components/auth/Login";
+import Layout from "./components/layout/Layout";
+import AuthLayout from "./components/layout/AuthLayout";
+import EnterPassword from "./components/auth/EnterPassword";
+import SignUp from "./components/auth/SignUp";
+
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, user } = useAuthStore();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  if (!user.isVerified) {
+    return <Navigate to="/verify-email" replace />;
+  }
+  return children;
+};
+
+const RedirectAuthenticatedUser = ({ children }) => {
+  const { isAuthenticated, user } = useAuthStore();
+
+  if (isAuthenticated && user.isVerified) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
 
 export default function App() {
+  const { isCheckingAuth, checkAuth } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  if (isCheckingAuth) return <LoadingSpinner />;
+
   return (
-    <div className="flex h-screen bg-gray-900 text-gray-100 overflow-hidden">
-      {/* Left Sidebar */}
-      <Sidebar />
+    <Routes>
+      <Route
+        path="/login"
+        element={
+          <AuthLayout>
+            <Login />
+          </AuthLayout>
+        }
+      />
+      <Route
+        path="/enter-password"
+        element={
+          <AuthLayout>
+            <EnterPassword/>
+          </AuthLayout>
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          <AuthLayout>
+            <SignUp/>
+          </AuthLayout>
+        }
+      />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-y-auto">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/explore" element={<Explore />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/grok" element={<Grok />} />
-        </Routes>
-      </div>
-
-      {/* Right Section (Search/Trends/Extras) */}
-      <div className="w-80 hidden lg:block bg-gray-800 p-4 border-l border-gray-700">
-     
-        {/* Add trends or other components here */}
-      </div>
-    </div>
+      <Route element={<Layout />}>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/explore" element={<Explore />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/notifications" element={<Notifications />} />
+        <Route path="/grok" element={<Grok />} />
+      </Route>
+    </Routes>
   );
 }

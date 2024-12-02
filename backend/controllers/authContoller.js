@@ -1,6 +1,6 @@
 const { User } = require("../models/User");
 const bcrypt = require("bcryptjs");
-const crypto = require("crypto");
+// const crypto = require("crypto");
 const generateTokenAndSetCookie = require("../utils/generateTokenAndSetCookie");
 // const sendEmail = require("../utils/sendEmail");
 
@@ -56,6 +56,85 @@ const signup = async (req, res) => {
   }
 };
 
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Password",
+      });
+    }
+
+    const token = generateTokenAndSetCookie(res, user._id);
+    console.log("Token generated:", token);
+
+    user.lastLogin = new Date();
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Logged in successfully",
+      user: {
+        ...user._doc,
+        password: undefined,
+      },
+      token,
+    });
+
+    console.log("Token generated:", token);
+  } catch (error) {
+    console.log("Error logging in", error);
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const checkEmail = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Email is required" });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Email not registered" });
+    }
+
+    res.status(200).json({ success: true, message: "Email exists" });
+  } catch (error) {
+    console.error("Error checking email:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+const logout = async (req, res) => {
+  res.clearCookie("token");
+  res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
+};
+
 const verifyEmail = async (req, res) => {
   const { code } = req.body;
 
@@ -95,11 +174,9 @@ const verifyEmail = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
-  const { email, password } = req.body;
-
+const checkAuth = async (req, res) => {
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findById(req.userId).select("-password");
     if (!user) {
       return res.status(400).json({
         success: false,
@@ -107,65 +184,18 @@ const login = async (req, res) => {
       });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid Password",
-      });
-    }
-
-    generateTokenAndSetCookie(res, user._id);
-
-    user.lastLogin = new Date();
-    await user.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Logged in successfully",
-      user: {
-        ...user._doc,
-        password: undefined,
-      },
-    });
+    res.status(200).json({ success: true, user });
   } catch (error) {
-    console.log("Error logging in", error);
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    console.log("Error in checkAuth", error);
+    res.status(400).json({ success: false, message: error.message });
   }
 };
-
-const logout = async (req, res) => {
-    res.clearCookie("token")
-    res.status(200).json({ 
-        success:true, message: "Logged out successfully"
-    })
-}
-
-const checkAuth = async(req, res) => {
-  try {
-    const user = await User.findById(req.userId).select("-password")
-    if(!user) {
-      return res.status(400).json({
-        success: false, message: "User not found"
-      })
-    }
-
-    res.status(200).json({ success: true, user})
-  } catch(error) {
-    console.log("Eroor in checkAuth", error)
-    res.status(400).json({ success: false, message: error.message})
-  }
-}
-
-
 
 module.exports = {
   signup,
   verifyEmail,
   login,
-  logout, checkAuth
+  logout,
+  checkAuth,
+  checkEmail,
 };

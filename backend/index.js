@@ -1,33 +1,33 @@
 if (process.env.NODE_ENV != "production") {
-    require("dotenv").config()
+  require("dotenv").config();
 }
 
-const express = require("express")
-const cors = require("cors")
-const connectToDB = require("./config/connectToDB")
-const postRoutes = require("./routes/postRoutes")
-const authRoutes = require("./routes/authRoutes")
+const express = require("express");
+const cors = require("cors");
+const connectToDB = require("./config/connectToDB");
+const postRoutes = require("./routes/postRoutes");
+const authRoutes = require("./routes/authRoutes");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 
+const app = express();
 
-const app = express()
-
-app.use(cookieParser())
+app.use(cookieParser());
 
 // Middleware for serving static files (uploads folder)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-app.use(express.json())
-const corsOptions = {
-    origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200
-  };
-app.use(cors(corsOptions));
+app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:3000", 
+    credentials: true,
+  })
+);
 
-connectToDB()
+connectToDB();
 
 app.use("/api", postRoutes);
 app.use("/api/auth", authRoutes);
 
-app.listen(process.env.PORT)
+app.listen(process.env.PORT);

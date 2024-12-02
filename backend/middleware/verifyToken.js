@@ -5,7 +5,7 @@ const verifyToken = (req, res, next) => {
   if (!token) {
     return res
       .status(401)
-      .json({ success: false, message: "Unauthorized = no token provided" });
+      .json({ success: false, message: "Unauthorized: no token provided" });
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -13,6 +13,7 @@ const verifyToken = (req, res, next) => {
     if(!decoded){
         return res.status(401).json({success:false, message:"Unauthorized Invalid token"})
     }
+    
     req.userId = decoded.userId;
     next();
 

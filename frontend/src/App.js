@@ -1,4 +1,3 @@
-import Sidebar from "./components/Sidebar";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Explore from "./pages/Explore";
@@ -40,7 +39,7 @@ export default function App() {
   const { isCheckingAuth, checkAuth } = useAuthStore();
 
   useEffect(() => {
-    checkAuth();
+    checkAuth(); 
   }, [checkAuth]);
 
   if (isCheckingAuth) return <LoadingSpinner />;
@@ -50,25 +49,31 @@ export default function App() {
       <Route
         path="/login"
         element={
-          <AuthLayout>
-            <Login />
-          </AuthLayout>
+          <RedirectAuthenticatedUser>
+            <AuthLayout>
+              <Login />
+            </AuthLayout>
+          </RedirectAuthenticatedUser>
         }
       />
       <Route
         path="/enter-password"
         element={
-          <AuthLayout>
-            <EnterPassword/>
-          </AuthLayout>
+          <RedirectAuthenticatedUser>
+            <AuthLayout>
+              <EnterPassword />
+            </AuthLayout>
+          </RedirectAuthenticatedUser>
         }
       />
       <Route
         path="/signup"
         element={
-          <AuthLayout>
-            <SignUp/>
-          </AuthLayout>
+          <RedirectAuthenticatedUser>
+            <AuthLayout>
+              <SignUp />
+            </AuthLayout>
+          </RedirectAuthenticatedUser>
         }
       />
 

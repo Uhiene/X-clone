@@ -93,9 +93,17 @@ export const useAuthStore = create((set) => ({
 
   checkAuth: async () => {
     set({ isCheckingAuth: true, error: null });
-
+  
     try {
-      const response = await axios.get(`${API_URL}/check-auth`); 
+      // Make the GET request to check authentication
+      const response = await axios.get(`${API_URL}/check-auth`, {
+        headers: {
+          // Include the token if available
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+  
+      // On success, update state with user info and set authentication flag to true
       set({
         user: response.data.user,
         isAuthenticated: true,
@@ -103,10 +111,13 @@ export const useAuthStore = create((set) => ({
       });
     } catch (error) {
       console.error("Check Auth Error:", error.response?.data || error.message);
-    set({
-      error: error.response?.data?.message || "Authentication failed",
-      isAuthenticated: false,
-      isCheckingAuth: false,
-    });}
+  
+      set({
+        error: error.response?.data?.message || "Authentication failed",
+        isAuthenticated: false,
+        isCheckingAuth: false,
+      });
+    }
   },
+  
 }));

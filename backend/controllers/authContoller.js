@@ -1,13 +1,13 @@
-const { User } = require("../models/User");
+const User  = require("../models/User");
 const bcrypt = require("bcryptjs");
 // const crypto = require("crypto");
 const generateTokenAndSetCookie = require("../utils/generateTokenAndSetCookie");
 // const sendEmail = require("../utils/sendEmail");
 
 const signup = async (req, res) => {
-  const { email, password, name } = req.body;
+  const { email, password, username } = req.body;
   try {
-    if (!email || !password || !name) {
+    if (!email || !password || !username) {
       throw new Error("All fields are required");
     }
 
@@ -27,7 +27,7 @@ const signup = async (req, res) => {
     const user = new User({
       email,
       password: hashedPassword,
-      name,
+      username,
       verificationToken,
       verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
     });
@@ -156,7 +156,7 @@ const verifyEmail = async (req, res) => {
     user.verificationTokenExpiresAt = undefined;
     await user.save();
 
-    // await sendWelcomeEmail(user.email, user.name);
+    // await sendWelcomeEmail(user.email, user.username);
     res.status(200).json({
       success: true,
       message: "Email verified successfully",
@@ -176,7 +176,16 @@ const verifyEmail = async (req, res) => {
 
 const checkAuth = async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select("-password");
+    let user;
+
+    // If the user is authenticated via Google, use the session to fetch user data
+    if (req.isAuthenticated) {
+      user = req.user; // This comes from passport session
+    } else if (req.userId) {
+      // If not, check the JWT token as usual
+      user = await User.findById(req.userId).select("-password");
+    }
+
     if (!user) {
       return res.status(400).json({
         success: false,
@@ -191,6 +200,16 @@ const checkAuth = async (req, res) => {
   }
 };
 
+const getMe = async (req, res) => {
+	try {
+		const user = await User.findById(req.user._id).select("-password");
+		res.status(200).json(user);
+	} catch (error) {
+		console.log("Error in getMe controller", error.message);
+		res.status(500).json({ error: "Internal Server Error" });
+	}
+};
+
 module.exports = {
   signup,
   verifyEmail,
@@ -198,4 +217,5 @@ module.exports = {
   logout,
   checkAuth,
   checkEmail,
+  getMe,
 };

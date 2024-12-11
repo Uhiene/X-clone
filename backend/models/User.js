@@ -10,9 +10,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    name: {
+    username: {
         type: String,
-        required: true
     },
     dob: {
         type: Date,
@@ -26,6 +25,45 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    followers: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: [],
+        },
+    ],
+    following: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            default: [],
+        },
+    ],
+    profileImg: {
+        type: String,
+        default: "",
+    },
+    coverImg: {
+        type: String,
+        default: "",
+    },
+    bio: {
+        type: String,
+        default: "",
+    },
+
+    link: {
+        type: String,
+        default: "",
+    },
+    likedPosts: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Post",
+            default: [],
+        },
+    ],
+    profilePhoto: String,
     resetPasswordToken: String,
     resetPasswordExpiredAt: Date,
     verificationToken: String,
@@ -34,4 +72,4 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-module.exports = { User };
+module.exports = User 

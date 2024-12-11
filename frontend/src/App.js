@@ -1,8 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
-import Explore from "./pages/Explore";
-import Grok from "./pages/Grok";
-import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
@@ -12,6 +9,7 @@ import Layout from "./components/layout/Layout";
 import AuthLayout from "./components/layout/AuthLayout";
 import EnterPassword from "./components/auth/EnterPassword";
 import SignUp from "./components/auth/SignUp";
+import ComingSoon from "./pages/ComingSoon";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -19,9 +17,9 @@ const ProtectedRoute = ({ children }) => {
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  if (!user.isVerified) {
-    return <Navigate to="/verify-email" replace />;
-  }
+  // if (!user.isVerified) {
+  //   return <Navigate to="/" replace />;
+  // }
   return children;
 };
 
@@ -39,7 +37,7 @@ export default function App() {
   const { isCheckingAuth, checkAuth } = useAuthStore();
 
   useEffect(() => {
-    checkAuth(); 
+    checkAuth();
   }, [checkAuth]);
 
   if (isCheckingAuth) return <LoadingSpinner />;
@@ -86,10 +84,8 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/messages" element={<Messages />} />
         <Route path="/notifications" element={<Notifications />} />
-        <Route path="/grok" element={<Grok />} />
+        <Route path="*" element={<ComingSoon />} />
       </Route>
     </Routes>
   );

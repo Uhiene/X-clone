@@ -7,6 +7,7 @@ const {
   logout,
   checkAuth,
   checkEmail,
+  getMe,
 } = require("../controllers/authContoller");
 
 // Google Auth
@@ -23,6 +24,7 @@ router.post("/login", login);
 router.post("/check-email", checkEmail);
 router.post("/logout", logout);
 router.get("/check-auth", verifyToken, checkAuth)
+router.get("/me",  getMe)
 
 // Google Auth session setup
 router.use(

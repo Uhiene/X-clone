@@ -51,7 +51,7 @@ export default function ContentSwitch() {
   return (
     <div className="flex flex-col h-full">
       {/* Toggle Buttons */}
-      <div className="flex justify-around border-b border-gray-700 mb-4">
+      <div className="flex justify-around border-b border-gray-700">
         <button
           onClick={() => setView("forYou")}
           className={`flex-1 py-3 text-center font-semibold ${

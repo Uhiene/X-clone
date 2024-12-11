@@ -63,11 +63,11 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="border border-gray-700 rounded-lg p-4 bg-gray-800">
+    <div className="border border-gray-700 p-4">
       {/* Input Area */}
-      <div className="flex">
+      <div className="flex items-start max-h-fit">
         {/* Profile Picture */}
-        <div className="mr-4">
+        <div className="mr-2">
           <img
             src="https://via.placeholder.com/48"
             alt="Profile"
@@ -76,14 +76,43 @@ export default function CreatePost() {
         </div>
 
         {/* Text Input */}
-        <div className="flex-1">
+        <div className="flex-1 mt-2.5">
           <textarea
             value={postText}
             onChange={(e) => setPostText(e.target.value)}
-            placeholder="What's happening?"
-            className="w-full bg-transparent text-gray-100 resize-none focus:outline-none"
+            placeholder="What's happening?!"
+            className="w-full bg-transparent text-gray-100 resize-none focus:outline-none text-xl  border-b border-gray-600"
             rows="3"
           />
+
+          <div className="-mt-0.5 flex justify-between items-center">
+            {/* Media Upload Options */}
+            <div className="flex items-center space-x-4">
+              <label className="cursor-pointer">
+                <FaImage className="text-gray-400 hover:text-sky-500 text-lg" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+              </label>
+              <FaSmile className="text-gray-400 hover:text-sky-500 text-lg cursor-pointer" />
+            </div>
+
+            {/* Post Button */}
+            <button
+              onClick={handlePost}
+              className={`bg-white hover:bg-gray-600 text-black px-4 py-2 rounded-full font-semibold ${
+                !postText.trim() && !image
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
+              disabled={!postText.trim() && !image}
+            >
+              Post
+            </button>
+          </div>
         </div>
       </div>
 
@@ -109,32 +138,6 @@ export default function CreatePost() {
       )}
 
       {/* Actions */}
-      <div className="mt-4 flex justify-between items-center">
-        {/* Media Upload Options */}
-        <div className="flex items-center space-x-4">
-          <label className="cursor-pointer">
-            <FaImage className="text-gray-400 hover:text-sky-500 text-lg" />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
-          </label>
-          <FaSmile className="text-gray-400 hover:text-sky-500 text-lg cursor-pointer" />
-        </div>
-
-        {/* Post Button */}
-        <button
-          onClick={handlePost}
-          className={`bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg font-semibold ${
-            !postText.trim() && !image ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={!postText.trim() && !image}
-        >
-          Post
-        </button>
-      </div>
 
       {/* Error Message */}
       {error && <p className="text-red-500 mt-2">{error}</p>}

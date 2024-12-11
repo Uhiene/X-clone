@@ -1,6 +1,7 @@
 import React from "react";
 
 const DisplayPost = ({ user, content, image, timestamp }) => {
+  const backendURL = process.env.BACKEND_URL || "http://localhost:8000";
     const formatDate = (timestamp) => {
         const postTime = new Date(timestamp);
       
@@ -16,14 +17,13 @@ const DisplayPost = ({ user, content, image, timestamp }) => {
       
         return `${hoursAgo}h`; // Return hours
       };
-      
 
   return (
     <div className="max-w-2xl mx-auto my-4 p-4 border-b border-gray-300 shadow-md bg-transparent">
       {/* Post Header */}
       <div className="flex items-center space-x-3">
         <img
-          src="https://i.pravatar.cc/150?img=3" // Placeholder profile image
+            src="https://via.placeholder.com/48"
           alt="User Avatar"
           className="w-10 h-10 rounded-full object-cover"
         />
@@ -39,7 +39,7 @@ const DisplayPost = ({ user, content, image, timestamp }) => {
       </div>
 
       {/* Image (if any) */}
-      {image && <img src={`http://localhost:8000/uploads/${image}`} alt="Post image" className="w-full rounded-lg" />}
+      <img src={`${backendURL}/uploads/${image}`} alt="Post image" className="w-full rounded-lg" />;
 
       {/* Post Actions (like, comment, share buttons) */}
       <div className="flex justify-between items-center mt-4 text-gray-500">

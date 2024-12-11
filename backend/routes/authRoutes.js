@@ -8,7 +8,7 @@ const {
   checkAuth,
   checkEmail,
   getMe,
-} = require("../controllers/authContoller");
+} = require("../controllers/authController");
 
 // Google Auth
 const passport = require("passport");

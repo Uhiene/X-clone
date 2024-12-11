@@ -1,5 +1,5 @@
 const express = require('express');
-const { getUser, getSuggestedUsers, followUnfollow, updateProfile, getAllUsers } = require('../controllers/userContoller');
+const { getUser, getSuggestedUsers, followUnfollow, updateProfile, getAllUsers } = require('../controllers/userController');
 const { verifyToken } = require('../middleware/verifyToken');
 
 const router = express.Router();

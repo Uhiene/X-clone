@@ -8,6 +8,7 @@ const connectToDB = require("./config/connectToDB");
 const postRoutes = require("./routes/postRoutes");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 const cookieParser = require("cookie-parser");
 
 const app = express();
@@ -39,5 +40,6 @@ connectToDB();
 app.use("/api", postRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.listen(process.env.PORT);

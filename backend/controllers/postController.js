@@ -1,4 +1,5 @@
 const Post = require("../models/Post");
+const User = require("../models/User");
 
 // Create a new post
 const createPost = async (req, res) => {
@@ -31,4 +32,40 @@ const getPosts = async (req, res) => {
   }
 };
 
-module.exports = { createPost, getPosts };
+const getFollowersPosts = async (req, res) => {
+  try {
+    console.log("Received request for following posts");
+    
+    // Find the authenticated user
+    const user = await User.findById(req.userId);
+    console.log("User found:", user);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    console.log("User following:", user.following.length);
+
+    // Get the IDs of users the authenticated user is following
+    const followingUserIds = user.following.map(user => user._id);
+    console.log("Following user IDs:", followingUserIds);
+
+    // Query MongoDB to get posts from those users
+    const posts = await Post.find({
+      author: { $in: followingUserIds }
+    })
+      .sort({ createdAt: -1 }) // Sort by most recent first
+      .limit(10); // Limit to 10 posts per request;
+
+    console.log("Number of posts found:", posts.length);
+
+    res.json({ posts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching posts', details: error.message });
+  }
+};
+
+
+
+module.exports = { createPost, getPosts, getFollowersPosts };

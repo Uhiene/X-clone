@@ -12,7 +12,7 @@ import SignUp from "./components/auth/SignUp";
 import ComingSoon from "./pages/ComingSoon";
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, username } = useAuthStore();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

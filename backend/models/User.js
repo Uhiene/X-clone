@@ -13,6 +13,10 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
     },
+    name: {
+        type: String, 
+        default: "",
+      },
     dob: {
         type: Date,
         required: false

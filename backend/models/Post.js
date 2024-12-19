@@ -13,12 +13,37 @@ const PostSchema = new mongoose.Schema(
     },
     username: {
       type: String,
-      required: true,
+			ref: "User",
+			required: true,
     },
     image: { type: String },
+    author: { type: String },
+    likes: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User",
+			},
+		],
+		comments: [
+			{
+				text: {
+					type: String,
+					required: true,
+				},
+				user: {
+					type: mongoose.Schema.Types.ObjectId,
+					ref: "User",
+					required: true,
+				},
+			},
+		],
+
   },
+  
   { timestamps: true }
 );
-
+// PostSchema.virtual('author').get(function() {
+//   return this.username;
+// });
 const Post = mongoose.model("Post", PostSchema);
 module.exports = Post;

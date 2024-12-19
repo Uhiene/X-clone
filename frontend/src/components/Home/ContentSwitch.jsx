@@ -1,49 +1,65 @@
 import React, { useEffect, useState } from "react";
 import CreatePost from "./CreatePost";
 import DisplayPost from "./DisplayPost";
-import axios from "axios";
+import { usePostStore } from "../../store/postStore";
 
 export default function ContentSwitch() {
-  const [view, setView] = useState("forYou"); 
-  const [posts, setPosts] = useState([]);
+  const [view, setView] = useState("forYou");
+  const {
+    postsForYou,
+    postsFollowing,
+    getPostsForYou,
+    getFollowingPosts,
+    isLoading,
+  } = usePostStore((state) => state);
 
   useEffect(() => {
-    // Fetch posts from the API when the component is mounted
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get("http://localhost:8000/api/posts");
-        setPosts(response.data); // Set fetched posts into the state
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      }
-    };
-
-    fetchPosts();
-  }, []);
-
+    // Fetch "For You" posts on mount
+    if (view === "forYou") {
+      getPostsForYou();
+    } else if (view === "following") {
+      getFollowingPosts();
+    }
+  }, [view, getPostsForYou, getFollowingPosts]);
 
   const renderContent = () => {
-    
     if (view === "forYou") {
       return (
         <div>
-          {posts.map((post) => (
-            <DisplayPost
-              key={post._id} // Use a unique key for each post
-              user={post.user}
-              content={post.content}
-              image={post.image}
-              timestamp={post.timestamp}
-            />
-          ))}
+          {isLoading ? (
+            <p>Loading posts...</p>
+          ) : (
+            postsForYou.map((post) => (
+              <DisplayPost
+                key={post._id} // Use a unique key for each post
+                username={post.username} // Assuming username is used here
+                content={post.content}
+                image={post.image}
+                timestamp={post.createdAt}
+              />
+            ))
+          )}
         </div>
       );
     } else if (view === "following") {
       return (
         <div>
-          <h2 className="text-2xl font-bold mb-4">Following</h2>
-          <p>Content from the people you're following will appear here.</p>
-        </div>
+        {isLoading ? (
+          <p>Loading following posts...</p>
+        ) : postsFollowing.length > 0 ? (
+          postsFollowing.map((post) => (
+            <DisplayPost
+              key={post._id}
+              user={post.username}
+              content={post.content}
+              image={post.image}
+              timestamp={post.createdAt}
+            />
+          ))
+        ) : (
+          <p>No following posts found.</p>
+        )}
+      </div>
       );
     }
   };

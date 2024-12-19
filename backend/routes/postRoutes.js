@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer");
-const { createPost, getPosts } = require("../controllers/postController");
+const { createPost, getPosts, getFollowersPosts } = require("../controllers/postController");
+const { verifyToken } = require('../middleware/verifyToken');
 
 const router = express.Router();
 
@@ -8,9 +9,10 @@ const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
 // Create a new post
-router.post("/posts", upload.single("image"), createPost);
+router.post("/", upload.single("image"), verifyToken, createPost);
 
 // Get all posts
-router.get("/posts", getPosts);
+router.get("/", getPosts);
+router.get("/following", verifyToken, getFollowersPosts );
 
 module.exports = router;

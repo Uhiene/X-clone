@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom"; // For rendering nested routes
-import Sidebar from "../Sidebar";
+import Sidebar from "./Sidebar";
+import SuggestedFollowers from "./SuggestedFollowers";
 
 const Layout = () => {
   return (
@@ -13,7 +14,9 @@ const Layout = () => {
       </div>
 
       {/* Right Section (Optional) */}
-      <div className="w-80 hidden lg:block bg-gray-800 p-4 border-l border-gray-700"></div>
+      <div className="w-96 hidden lg:block bg-gray-800 p-4 border-l border-gray-700">
+        <SuggestedFollowers/>
+      </div>
     </div>
   );
 };

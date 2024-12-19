@@ -10,4 +10,4 @@ router.get('/suggested', verifyToken, getSuggestedUsers)
 router.post('/follow/:id', verifyToken, followUnfollow)
 router.post('/update', verifyToken, updateProfile)
 
-module.exports = router;
+module.exports = router; 
